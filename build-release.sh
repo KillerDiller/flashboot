@@ -6,8 +6,8 @@ WORKDIR=sandbox
 export CWD WORKDIR
 
 # Update for each new release
-SHORTREL="51"
-LONGREL="5.1"
+SHORTREL="53"
+LONGREL="5.3"
 
 # No need to change anything below this line for new OS releases!
 
@@ -16,7 +16,7 @@ URLBASE="http://ftp.su.se/pub/OpenBSD/${LONGREL}"
 PATCHURL="ftp://ftp.openbsd.org/pub/OpenBSD/patches/${LONGREL}/common/*"
 
 echo "Cleaning up previous build.."
-${SUDO} rm -rf ${WORKDIR}
+rm -rf ${WORKDIR}
 
 echo "Creating sandbox and diststuff.."
 mkdir -p ${WORKDIR}
