@@ -1,12 +1,13 @@
 # copy the MAKEDEV script and make some devices
 SCRIPT ${DESTDIR}/dev/MAKEDEV			dev/MAKEDEV
 SPECIAL chmod 700 dev/MAKEDEV
-SPECIAL cd dev; ./MAKEDEV ramdisk pty systrace tty00 tty01 pci wdt0 
+SPECIAL cd dev; ./MAKEDEV ramdisk ptm pty systrace tty00 tty01 pci wdt0 
 SPECIAL cd dev; ./MAKEDEV ttyU0 ttyU1
 SPECIAL cd dev; ./MAKEDEV tun0 tun1 tun2 tun3 tun4 tun5 tun6 tun7
 SPECIAL cd dev; ./MAKEDEV bpf0 bpf1 bpf2 bpf3 bpf4 bpf5 bpf6 bpf7 
 SPECIAL cd dev; ./MAKEDEV pf crypto fd wsmux wscons apm local gpio
 SPECIAL cd dev; ./MAKEDEV sd1 sd2 sd3 sd4 sd5 sd6 sd7 sd8 sd9
+SPECIAL cd dev; ./MAKEDEV pppx0
 SPECIAL cd dev; ./MAKEDEV arandom
 
 COPY	${DESTDIR}/etc/disktab			etc/disktab
@@ -25,7 +26,10 @@ COPY    ${DESTDIR}/var/named/standard/localhost         var/named/standard/local
 COPY    ${DESTDIR}/var/named/standard/loopback          var/named/standard/loopback
 COPY    ${DESTDIR}/var/named/standard/loopback6.arpa    var/named/standard/loopback6.arpa
 COPY    ${DESTDIR}/var/named/etc/root.hint              var/named/etc/root.hint
-COPY	${DESTDIR}/etc/mtree/4.4BSD.dist	etc/mtree/4.4BSD.dist
+COPY	${DESTDIR}/etc/mtree/4.4BSD.dist		etc/mtree/4.4BSD.dist
+COPY    ${DESTDIR}/etc/npppd/npppd-users        	etc/npppd/npppd-users
+COPY    ${DESTDIR}/etc/npppd/npppd.conf         	etc/npppd/npppd.conf
+COPY    ${DESTDIR}/etc/snmpd.conf         		etc/snmpd.conf
 SPECIAL chmod 755 etc/netstart
 SPECIAL touch var/cron/cron.deny
 SPECIAL chown root.crontab var/cron/cron.deny
@@ -100,6 +104,17 @@ COPY ${DESTDIR}/usr/sbin/named			usr/sbin/named
 COPY ${DESTDIR}/usr/sbin/rndc			usr/sbin/rndc
 COPY ${DESTDIR}/usr/sbin/rndc-confgen		usr/sbin/rndc-confgen
 COPY ${DESTDIR}/usr/sbin/dig			usr/sbin/dig
+COPY ${DESTDIR}/usr/sbin/useradd		/usr/sbin/useradd
+COPY ${DESTDIR}/usr/sbin/userdel		/usr/sbin/userdel
+COPY ${DESTDIR}/usr/sbin/userinfo		/usr/sbin/userinfo
+COPY ${DESTDIR}/usr/sbin/usermod		/usr/sbin/usermod
+COPY ${DESTDIR}/usr/sbin/adduser		/usr/sbin/adduser
+COPY ${DESTDIR}/usr/sbin/groupadd		/usr/sbin/groupadd
+COPY ${DESTDIR}/usr/sbin/groupinfo		/usr/sbin/groupinfo
+COPY ${DESTDIR}/usr/sbin/groupdel		/usr/sbin/groupdel
+COPY ${DESTDIR}/usr/sbin/groupmod		/usr/sbin/groupmod
+COPY ${DESTDIR}/usr/sbin/npppd    usr/sbin/npppd
+COPY ${DESTDIR}/usr/sbin/npppctl  usr/sbin/npppctl
 COPY ${DESTDIR}/usr/bin/ldd			usr/bin/ldd
 COPY ${DESTDIR}/sbin/mount_msdos		sbin/mount_msdos
 COPY ${DESTDIR}/sbin/kbd			sbin/kbd
@@ -133,7 +148,6 @@ COPY ${DESTDIR}/bin/test			bin/test
 #COPY ${DESTDIR}/sbin/ldattach			sbin/ldattach
 COPY ${DESTDIR}/sbin/ldconfig			sbin/ldconfig
 COPY ${DESTDIR}/sbin/dhclient			sbin/dhclient
-COPY ${DESTDIR}/sbin/dhclient-script		sbin/dhclient-script
 COPY ${DESTDIR}/sbin/dmesg			sbin/dmesg
 COPY ${DESTDIR}/sbin/fsck			sbin/fsck
 COPY ${DESTDIR}/sbin/fsck_ffs			sbin/fsck_ffs
@@ -205,7 +219,6 @@ COPY ${DESTDIR}/usr/libexec/ld.so		usr/libexec/ld.so
 COPY ${DESTDIR}/usr/libexec/sftp-server		usr/libexec/sftp-server
 COPY ${DESTDIR}/usr/libexec/spamd		usr/libexec/spamd
 COPY ${DESTDIR}/usr/libexec/spamd-setup		usr/libexec/spamd-setup
-COPY ${DESTDIR}/usr/libexec/tftpd		usr/libexec/tftpd
 COPY ${DESTDIR}/usr/sbin/authpf			usr/sbin/authpf
 COPY ${DESTDIR}/usr/sbin/arp			usr/sbin/arp
 COPY ${DESTDIR}/usr/sbin/bgpd			usr/sbin/bgpd
@@ -226,6 +239,8 @@ COPY ${DESTDIR}/usr/sbin/ndp			usr/sbin/ndp
 COPY ${DESTDIR}/usr/sbin/ntpd			usr/sbin/ntpd
 COPY ${DESTDIR}/usr/sbin/ospfd			usr/sbin/ospfd
 COPY ${DESTDIR}/usr/sbin/ospfctl		usr/sbin/ospfctl
+COPY ${DESTDIR}/usr/sbin/ripd           	usr/sbin/ripd
+COPY ${DESTDIR}/usr/sbin/ripctl         	usr/sbin/ripctl
 #COPY ${DESTDIR}/usr/sbin/portmap		usr/sbin/portmap
 COPY ${DESTDIR}/usr/sbin/ppp			usr/sbin/ppp
 COPY ${DESTDIR}/usr/sbin/pppctl			usr/sbin/pppctl
@@ -244,6 +259,7 @@ COPY ${DESTDIR}/usr/sbin/syslogc		usr/sbin/syslogc
 COPY ${DESTDIR}/usr/sbin/syslogd		usr/sbin/syslogd
 COPY ${DESTDIR}/usr/sbin/tcpdrop		usr/sbin/tcpdrop
 COPY ${DESTDIR}/usr/sbin/tcpdump		usr/sbin/tcpdump
+COPY ${DESTDIR}/usr/sbin/tftpd			usr/sbin/tftpd
 COPY ${DESTDIR}/usr/sbin/traceroute		usr/sbin/traceroute
 COPY ${DESTDIR}/usr/sbin/traceroute6		usr/sbin/traceroute6
 COPY ${DESTDIR}/usr/sbin/watchdogd		usr/sbin/watchdogd
